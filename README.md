@@ -31,6 +31,6 @@ make
 
 ![Time Series COVID-19 deaths (Germany, Austria, US)](time_series_19-covid-Deaths.png)
 
-![Time Series COVID-19 deaths (Germany, Austria, US) scaled by population](time_series_19-covid-Deaths@population.png)
+![Time Series COVID-19 deaths (Germany, Austria, US) scaled by population](time_series_19-covid-Deaths.@population.png)
 
-![Time Series COVID-19 deaths (Germany, Austria, US) scaled by density](time_series_19-covid-Deaths@density.png)
+![Time Series COVID-19 deaths (Germany, Austria, US) scaled by density](time_series_19-covid-Deaths.@density.png)
