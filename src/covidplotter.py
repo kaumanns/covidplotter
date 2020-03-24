@@ -101,7 +101,7 @@ if __name__ == "__main__":
     parser.add_argument("--num-recent-entries", "-r", type=int, action="store", default=None,
             help="Number of recent entries to plot (default: all)")
 
-    parser.add_argument("--transformation", "-f", type=str, action="store", default="identity",
-            help="Apply transformation function. Options: identity, log (default: identity)")
+    parser.add_argument("--transformation", "-f", type=str, action="store", choices=["identity", "log"], default="identity",
+            help="Apply transformation function (default: identity)")
 
     main(parser.parse_args())
