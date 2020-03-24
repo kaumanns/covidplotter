@@ -5,7 +5,6 @@ import sys
 import json
 import math
 import argparse
-import urllib.request
 
 import matplotlib.pyplot as plt
 
