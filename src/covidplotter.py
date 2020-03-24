@@ -34,7 +34,7 @@ def _csv(input_file):
 
 def _transformation(n, transformation):
     if transformation == "log":
-        if n < 1.0:
+        if n == 0.0:
             return 0.0
         else:
             return math.log(n)
