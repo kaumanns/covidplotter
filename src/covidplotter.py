@@ -51,7 +51,7 @@ def _xtick_offset(num_xticks, num_recent_entries):
         return num_recent_entries
 
 def main(args):
-    loc_to_denominator = json.load(open(args.denominators, "r"))
+    loc_to_scale = json.load(open(args.scaling_map, "r"))
 
     xticklabels, loc_to_counts = _csv(args.input)
 
@@ -63,10 +63,10 @@ def main(args):
     xtick_begin = xtick_end - xtick_offset
 
     for loc, counts in loc_to_counts.items():
-        if loc in loc_to_denominator:
+        if loc in loc_to_scale:
             ax.plot(
                     [
-                        _transformation(float(count)/float(loc_to_denominator[loc]), args.transformation)
+                        _transformation(float(count)/float(loc_to_scale[loc]), args.transformation)
                         for count in counts[xtick_begin:xtick_end]
                         ],
                     label=loc
@@ -92,8 +92,8 @@ if __name__ == "__main__":
     parser.add_argument("--output", "-o", type=str, action="store", required=True,
             help="Output file path (PNG)")
 
-    parser.add_argument("--denominators", "-d", type=str, action="store", required=True,
-            help="Path to map of locations to denominators")
+    parser.add_argument("--scaling-map", "-s", type=str, action="store", required=True,
+            help="Path to JSON map from location to scaling factors")
 
     parser.add_argument("--title", "-t", type=str, action="store", required=True,
             help="Title string")

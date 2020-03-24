@@ -27,7 +27,7 @@ $(CSV_BASENAME).csv:
 %.png: %.csv locations.json $(COVIDPLOTTER)
 	$(PYTHON) $(word 3,$^) \
 		--input $(word 1,$^) \
-		--denominators $(word 2,$^) \
+		--scaling-map $(word 2,$^) \
 		--title "$(TITLE_PREFIX)" \
 		--num-recent-entries $(NUM_RECENT_ENTRIES) \
 		--transformation identity \
@@ -36,7 +36,7 @@ $(CSV_BASENAME).csv:
 %.@log.png: %.csv locations.json $(COVIDPLOTTER)
 	$(PYTHON) $(word 3,$^) \
 		--input $(word 1,$^) \
-		--denominators $(word 2,$^) \
+		--scaling-map $(word 2,$^) \
 		--title "$(TITLE_PREFIX)" \
 		--num-recent-entries $(NUM_RECENT_ENTRIES) \
 		--transformation log \
@@ -45,7 +45,7 @@ $(CSV_BASENAME).csv:
 %.@population.png: %.csv location_to_population_size.json $(COVIDPLOTTER)
 	$(PYTHON) $(word 3,$^) \
 		--input $(word 1,$^) \
-		--denominators $(word 2,$^) \
+		--scaling-map $(word 2,$^) \
 		--title "$(TITLE_PREFIX) scaled by population size" \
 		--num-recent-entries $(NUM_RECENT_ENTRIES) \
 		--transformation identity \
@@ -54,7 +54,7 @@ $(CSV_BASENAME).csv:
 %.@population@log.png: %.csv location_to_population_size.json $(COVIDPLOTTER)
 	$(PYTHON) $(word 3,$^) \
 		--input $(word 1,$^) \
-		--denominators $(word 2,$^) \
+		--scaling-map $(word 2,$^) \
 		--title "$(TITLE_PREFIX) scaled by population size" \
 		--num-recent-entries $(NUM_RECENT_ENTRIES) \
 		--transformation log \
@@ -63,7 +63,7 @@ $(CSV_BASENAME).csv:
 %.@density.png: %.csv location_to_population_density.json $(COVIDPLOTTER)
 	$(PYTHON) $(word 3,$^) \
 		--input $(word 1,$^) \
-		--denominators $(word 2,$^) \
+		--scaling-map $(word 2,$^) \
 		--title "$(TITLE_PREFIX) scaled by population density" \
 		--num-recent-entries $(NUM_RECENT_ENTRIES) \
 		--transformation identity \
@@ -72,7 +72,7 @@ $(CSV_BASENAME).csv:
 %.@density@log.png: %.csv location_to_population_density.json $(COVIDPLOTTER)
 	$(PYTHON) $(word 3,$^) \
 		--input $(word 1,$^) \
-		--denominators $(word 2,$^) \
+		--scaling-map $(word 2,$^) \
 		--title "$(TITLE_PREFIX) scaled by population density" \
 		--num-recent-entries $(NUM_RECENT_ENTRIES) \
 		--transformation log \
