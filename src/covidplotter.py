@@ -9,6 +9,12 @@ import urllib.request
 
 import matplotlib.pyplot as plt
 
+def _int_or_zero(n):
+    if n == "":
+        return 0
+    else:
+        return int(n)
+
 def _csv(input_file):
     xticklabels = None
     loc_to_counts = dict()
@@ -23,7 +29,7 @@ def _csv(input_file):
                 continue
 
             loc = (row[0] == "" and row[1] or row[0])
-            loc_to_counts[loc] = [int(n) for n in row[4:len(row)]]
+            loc_to_counts[loc] = [_int_or_zero(n) for n in row[4:len(row)]]
 
     return xticklabels, loc_to_counts
 
