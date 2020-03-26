@@ -1,8 +1,11 @@
 # covidplotter
 
-Maintains a local copy (as git submodule) of COVID-19 time series data (deaths) provided by CSSE at John Hopkins University (<https://github.com/CSSEGISandData/COVID-19>) and plots a subset of them as graphs, as specified by JSON configuration files containing countries and scaling denominators.
+This tool allows easy plotting of scaled transformations of COVID-19 time series data provided by CSSE at John Hopkins University (<https://github.com/CSSEGISandData/COVID-19>).
 
-Scaling factors (population sizes and densities) are taken from Wikipedia.
+The tool checks a local clone of the time series data for updates and generates new plots, if necessary.
+
+Scaling factors are defined per country in separate JSON configuration files.
+The currently provided scaling factors (population sizes and densities) are taken from English Wikipedia.
 
 ## Tested requirements
 
@@ -25,10 +28,14 @@ git clone <repository url>
 make
 ```
 
-- In order to update to the most current time series data, delete the CSV file and run again.
-- In order to change the countries and/or scaling denominators, modify the JSON configurations in `etc/`.
+Notes:
+
+- In order to change the countries and/or scaling factors, modify the JSON configurations in `etc/`.
+- If new configurations are provided, modify `Makefile` accordingly. Run `src/covidplotter.py` for more options.
 
 ## Plots
+
+Original:
 
 ![](time_series_covid19_deaths_global.png)
 ![](time_series_covid19_deaths_global.@population.png)
@@ -36,7 +43,7 @@ make
 
 ---
 
-Log:
+Natural Logarithm:
 
 ![](time_series_covid19_deaths_global.@log.png)
 ![](time_series_covid19_deaths_global.@population@log.png)
