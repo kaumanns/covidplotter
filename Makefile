@@ -8,20 +8,13 @@ NUM_RECENT_ENTRIES = 20
 SUBMODULE_REPOSITORY = https://github.com/CSSEGISandData/COVID-19.git
 SUBMODULE_ROOT = COVID-19
 CSV_HOME = $(SUBMODULE_ROOT)/csse_covid_19_data/csse_covid_19_time_series
-CSV_BASENAME = time_series_covid19_deaths_global
 
 vpath %.csv $(CSV_HOME)
 vpath %.json etc
 
-.SECONDEXPANSION:
+csv_basename = time_series_covid19_$(1)_global
 
-TARGETS = \
-		  $(CSV_BASENAME).png \
-		  $(CSV_BASENAME).@log.png \
-		  $(CSV_BASENAME).@population.png \
-		  $(CSV_BASENAME).@population@log.png \
-		  $(CSV_BASENAME).@density.png \
-		  $(CSV_BASENAME).@density@log.png
+targets = $(addprefix out/$(call csv_basename,$(1)),.png .@log.png .@population.png .@population@log.png .@density.png .@density@log.png)
 
 define plot =
 	$(COVIDPLOTTER) \
@@ -36,13 +29,9 @@ define plot =
 endef
 
 all: $(SUBMODULE_ROOT).pull
-	$(MAKE) $(TARGETS)
+	$(MAKE) $(call targets,confirmed) $(call targets,deaths) $(call targets,recovered)
 
-$(SUBMODULE_ROOT).submodule_add:
-	[[ -e $(SUBMODULE_ROOT) ]] \
-		|| $(GIT) add submodule $(SUBMODULE_REPOSITORY) $(SUBMODULE_ROOT)
-
-%.pull: %.add_submodule
+%.pull:
 	cd $* \
 		&& $(GIT) pull
 

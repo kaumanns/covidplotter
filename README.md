@@ -35,6 +35,22 @@ Notes:
 
 ## Plots
 
+### Confirmed
+
+![](out/time_series_covid19_confirmed_global.png)
+![](out/time_series_covid19_confirmed_global.@population.png)
+![](out/time_series_covid19_confirmed_global.@density.png)
+
+---
+
+Natural Logarithm:
+
+![](out/time_series_covid19_confirmed_global.@log.png)
+![](out/time_series_covid19_confirmed_global.@population@log.png)
+![](out/time_series_covid19_confirmed_global.@density@log.png)
+
+### Deaths
+
 ![](out/time_series_covid19_deaths_global.png)
 ![](out/time_series_covid19_deaths_global.@population.png)
 ![](out/time_series_covid19_deaths_global.@density.png)
@@ -46,3 +62,17 @@ Natural Logarithm:
 ![](out/time_series_covid19_deaths_global.@log.png)
 ![](out/time_series_covid19_deaths_global.@population@log.png)
 ![](out/time_series_covid19_deaths_global.@density@log.png)
+
+### Recovered
+
+![](out/time_series_covid19_recovered_global.png)
+![](out/time_series_covid19_recovered_global.@population.png)
+![](out/time_series_covid19_recovered_global.@density.png)
+
+---
+
+Natural Logarithm:
+
+![](out/time_series_covid19_recovered_global.@log.png)
+![](out/time_series_covid19_recovered_global.@population@log.png)
+![](out/time_series_covid19_recovered_global.@density@log.png)
