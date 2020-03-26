@@ -1,14 +1,15 @@
 # covidplotter
 
-Downloads current COVID-19 time series data (for deaths) provided by CSSE at John Hopkins University (<https://github.com/CSSEGISandData/COVID-19>) and plots a subset of them as graphs, as specified by JSON configuration files containing countries and scaling denominators.
+Maintains a local copy (as git submodule) of COVID-19 time series data (deaths) provided by CSSE at John Hopkins University (<https://github.com/CSSEGISandData/COVID-19>) and plots a subset of them as graphs, as specified by JSON configuration files containing countries and scaling denominators.
 
-Denominators (population sizes and densities) are taken from Wikipedia.
+Scaling factors (population sizes and densities) are taken from Wikipedia.
 
 ## Tested requirements
 
 - OS: Raspbian Buster
 - GNU bash 5.0.3(1)
 - GNU Make 4.2.1
+- Git 2.20.1
 - Python 3.7.3
     - matplotlib 3
 
@@ -29,8 +30,14 @@ make
 
 ## Plots
 
-![Time Series COVID-19 deaths (Germany, Austria, US)](time_series_19-covid-Deaths.png)
+![](time_series_covid19_deaths_global.png)
+![](time_series_covid19_deaths_global.@population.png)
+![](time_series_covid19_deaths_global.@density.png)
 
-![Time Series COVID-19 deaths (Germany, Austria, US) scaled by population](time_series_19-covid-Deaths.@population.png)
+---
 
-![Time Series COVID-19 deaths (Germany, Austria, US) scaled by density](time_series_19-covid-Deaths.@density.png)
+Log:
+
+![](time_series_covid19_deaths_global.@log.png)
+![](time_series_covid19_deaths_global.@population@log.png)
+![](time_series_covid19_deaths_global.@density@log.png)

@@ -1,9 +1,14 @@
 {
-    "Germany": 2.32,
-    "Austria": 1.06,
-    "Washington": 0.396,
-    "New York": 1.59,
-    "California": 0.979,
-    "Florida": 1.21,
-    "Massachusetts": 3.24
+    "Italy":         201.3,
+    "Spain":          92.0,
+    "France":        104.0,
+    "Austria":       106.0,
+    "Germany":       232.0,
+    "Switzerland":   207.0,
+    "US":             33.6,
+    "Florida":       121.0,
+    "New York":      159.0,
+    "California":     97.9,
+    "Washington":     39.6,
+    "Massachusetts": 324.0
 }

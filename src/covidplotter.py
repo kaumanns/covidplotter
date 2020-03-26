@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import csv
 import sys
 import json
@@ -35,7 +36,7 @@ def _csv(input_file):
 def _transformation(n, transformation):
     if transformation == "log":
         if n == 0.0:
-            return 0.0
+            return None
         else:
             return math.log(n)
     elif transformation == "identity":
@@ -51,9 +52,17 @@ def _xtick_offset(num_xticks, num_recent_entries):
         return num_recent_entries
 
 def main(args):
-    loc_to_scale = json.load(open(args.scaling_map, "r"))
+    # date_to_rows = dict()
+    # for entry in os.scandir(args.daily_reports_dir):
+    #     if entry.path.endswith(".csv"):
+    #         with open(entry.path, "r") as csvfile:
+    #             reader = csv.DictReader(csvfile)
+    #             for row in reader:
+    #                 date_to_rows[entry.name].append(row)
 
     xticklabels, loc_to_counts = _csv(args.input)
+
+    loc_to_scale = json.load(open(args.scaling_map, "r"))
 
     xtick_offset = _xtick_offset(len(xticklabels), args.num_recent_entries)
 
@@ -66,14 +75,14 @@ def main(args):
         if loc in loc_to_scale:
             ax.plot(
                     [
-                        _transformation(float(count)/float(loc_to_scale[loc]), args.transformation)
+                        _transformation(float(count) / (args.precision_factor * float(loc_to_scale[loc])), args.transformation)
                         for count in counts[xtick_begin:xtick_end]
                         ],
                     label=loc
                     )
 
-    ax.set_ylabel(args.transformation == "identity" and "Count" or "Count (" + args.transformation + ")")
-    ax.set_xlabel("Date")
+    ax.set_ylabel(args.ylabel)
+    ax.set_xlabel(args.xlabel)
 
     ax.set_title(args.title)
 
@@ -89,11 +98,23 @@ if __name__ == "__main__":
     parser.add_argument("--input", "-i", type=str, action="store", required=True,
             help="Input file path to CSV data by John Hopkins University")
 
+    # parser.add_argument("--daily-reports-dir", "-d", type=str, action="store", required=True,
+    #         help="Path to directory with daily reports (CSV files) by John Hopkins University")
+
     parser.add_argument("--output", "-o", type=str, action="store", required=True,
             help="Output file path (PNG)")
 
+    parser.add_argument("--xlabel", "-x", type=str, action="store", default="Date",
+            help="Label for x-axis")
+
+    parser.add_argument("--ylabel", "-y", type=str, action="store", default="Count",
+            help="Label for y-axis")
+
     parser.add_argument("--scaling-map", "-s", type=str, action="store", required=True,
             help="Path to JSON map from location to scaling factors")
+
+    parser.add_argument("--precision-factor", "-p", type=float, action="store", default=1.0,
+            help="Precision factor applied to scaling (use it to avoid precision errors with large numbers such as population size)")
 
     parser.add_argument("--title", "-t", type=str, action="store", required=True,
             help="Title string")
