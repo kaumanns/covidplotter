@@ -2,10 +2,8 @@ SHELL = /bin/bash
 GIT = /usr/bin/git
 COVIDPLOTTER = src/covidplotter.py
 
-TITLE = "COVID-19 time series (John Hopkins University): Deaths"
 NUM_RECENT_ENTRIES = 20
 
-SUBMODULE_REPOSITORY = https://github.com/CSSEGISandData/COVID-19.git
 SUBMODULE_ROOT = COVID-19
 CSV_HOME = $(SUBMODULE_ROOT)/csse_covid_19_data/csse_covid_19_time_series
 
@@ -28,27 +26,32 @@ define plot =
 		--num-recent-entries $(8)
 endef
 
+.SECONDEXPANSION:
+
 all: $(SUBMODULE_ROOT).pull
 	$(MAKE) $(call targets,confirmed) $(call targets,deaths) $(call targets,recovered)
+
+clean:
+	rm out/*.png
 
 %.pull:
 	cd $* \
 		&& $(GIT) pull
 
-%.png: %.csv locations.json
-	$(call plot,$<,$(word 2,$^),$@,$(TITLE),"Count",1.0,identity,$(NUM_RECENT_ENTRIES))
+%.png: $$(notdir $$*).csv locations.json
+	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Count",1.0,identity,$(NUM_RECENT_ENTRIES))
 
-%.@log.png: %.csv locations.json
-	$(call plot,$<,$(word 2,$^),$@,$(TITLE),"Log_e(count)",1.0,log,$(NUM_RECENT_ENTRIES))
+%.@log.png: $$(notdir $$*).csv locations.json
+	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Log_e(count)",1.0,log,$(NUM_RECENT_ENTRIES))
 
-%.@population.png: %.csv location_to_population_size.json
-	$(call plot,$<,$(word 2,$^),$@,$(TITLE),"Count / population size",0.000001,identity,$(NUM_RECENT_ENTRIES))
+%.@population.png: $$(notdir $$*).csv location_to_population_size.json
+	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Count / population size",0.000001,identity,$(NUM_RECENT_ENTRIES))
 
-%.@population@log.png: %.csv location_to_population_size.json
-	$(call plot,$<,$(word 2,$^),$@,$(TITLE),"Log_e(count / population size)",0.000001,log,$(NUM_RECENT_ENTRIES))
+%.@population@log.png: $$(notdir $$*).csv location_to_population_size.json
+	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Log_e(count / population size)",0.000001,log,$(NUM_RECENT_ENTRIES))
 
-%.@density.png: %.csv location_to_population_density.json
-	$(call plot,$<,$(word 2,$^),$@,$(TITLE),"Count / population density",1.0,identity,$(NUM_RECENT_ENTRIES))
+%.@density.png: $$(notdir $$*).csv location_to_population_density.json
+	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Count / population density",1.0,identity,$(NUM_RECENT_ENTRIES))
 
-%.@density@log.png: %.csv location_to_population_density.json
-	$(call plot,$<,$(word 2,$^),$@,$(TITLE),"Log_e(count / population density)",1.0,log,$(NUM_RECENT_ENTRIES))
+%.@density@log.png: $$(notdir $$*).csv location_to_population_density.json
+	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Log_e(count / population density)",1.0,log,$(NUM_RECENT_ENTRIES))
