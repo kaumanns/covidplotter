@@ -35,16 +35,14 @@ Notes:
 
 ## Plots
 
-Original:
-
-![](time_series_covid19_deaths_global.png)
-![](time_series_covid19_deaths_global.@population.png)
-![](time_series_covid19_deaths_global.@density.png)
+![](out/time_series_covid19_deaths_global.png)
+![](out/time_series_covid19_deaths_global.@population.png)
+![](out/time_series_covid19_deaths_global.@density.png)
 
 ---
 
 Natural Logarithm:
 
-![](time_series_covid19_deaths_global.@log.png)
-![](time_series_covid19_deaths_global.@population@log.png)
-![](time_series_covid19_deaths_global.@density@log.png)
+![](out/time_series_covid19_deaths_global.@log.png)
+![](out/time_series_covid19_deaths_global.@population@log.png)
+![](out/time_series_covid19_deaths_global.@density@log.png)
