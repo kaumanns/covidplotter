@@ -2,7 +2,8 @@ SHELL = /bin/bash
 GIT = /usr/bin/git
 COVIDPLOTTER = src/covidplotter.py
 
-NUM_RECENT_ENTRIES = 20
+NUM_RECENT_ENTRIES = 30
+SCALE_MAP = scale_map.json
 
 SUBMODULE_ROOT = COVID-19
 CSV_HOME = $(SUBMODULE_ROOT)/csse_covid_19_data/csse_covid_19_time_series
@@ -17,13 +18,15 @@ targets = $(addprefix out/$(call csv_basename,$(1)),.png .@log.png .@population.
 define plot =
 	$(COVIDPLOTTER) \
 		--input              $(1) \
-		--scaling-map        $(2) \
-		--output             $(3) \
-		--title              $(4) \
-		--ylabel             $(5) \
-		--precision-factor   $(6) \
-		--transformation     $(7) \
-		--num-recent-entries $(8)
+		--scale-map          $(2) \
+		$(if $(3),--scale-key $(3)) \
+		--output             $(4) \
+		--title              $(5) \
+		--scale-factor       $(6) \
+		$(if $(7),--transformation $(7)) \
+		--num-recent-entries $(8) \
+		--xlabel 			 Date \
+		--ylabel             Count
 endef
 
 .SECONDEXPANSION:
@@ -38,20 +41,20 @@ clean:
 	cd $* \
 		&& $(GIT) pull
 
-%.png: $$(notdir $$*).csv locations.json
-	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Count",1.0,identity,$(NUM_RECENT_ENTRIES))
+%.png: $$(notdir $$*).csv $(SCALE_MAP)
+	$(call plot,$<,$(word 2,$^),,$@,$(notdir $*),1.0,,$(NUM_RECENT_ENTRIES))
 
-%.@log.png: $$(notdir $$*).csv locations.json
-	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Log_e(count)",1.0,log,$(NUM_RECENT_ENTRIES))
+%.@log.png: $$(notdir $$*).csv $(SCALE_MAP)
+	$(call plot,$<,$(word 2,$^),,$@,$(notdir $*),1.0,log,$(NUM_RECENT_ENTRIES))
 
-%.@population.png: $$(notdir $$*).csv location_to_population_size.json
-	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Count / population size",0.000001,identity,$(NUM_RECENT_ENTRIES))
+%.@population.png: $$(notdir $$*).csv $(SCALE_MAP)
+	$(call plot,$<,$(word 2,$^),population_size,$@,$(notdir $*),0.000001,,$(NUM_RECENT_ENTRIES))
 
-%.@population@log.png: $$(notdir $$*).csv location_to_population_size.json
-	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Log_e(count / population size)",0.000001,log,$(NUM_RECENT_ENTRIES))
+%.@population@log.png: $$(notdir $$*).csv $(SCALE_MAP)
+	$(call plot,$<,$(word 2,$^),population_size,$@,$(notdir $*),0.000001,log,$(NUM_RECENT_ENTRIES))
 
-%.@density.png: $$(notdir $$*).csv location_to_population_density.json
-	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Count / population density",1.0,identity,$(NUM_RECENT_ENTRIES))
+%.@density.png: $$(notdir $$*).csv $(SCALE_MAP)
+	$(call plot,$<,$(word 2,$^),population_density_per_sqkm,$@,$(notdir $*),1.0,,$(NUM_RECENT_ENTRIES))
 
-%.@density@log.png: $$(notdir $$*).csv location_to_population_density.json
-	$(call plot,$<,$(word 2,$^),$@,$(notdir $*),"Log_e(count / population density)",1.0,log,$(NUM_RECENT_ENTRIES))
+%.@density@log.png: $$(notdir $$*).csv $(SCALE_MAP)
+	$(call plot,$<,$(word 2,$^),population_density_per_sqkm,$@,$(notdir $*),1.0,log,$(NUM_RECENT_ENTRIES))

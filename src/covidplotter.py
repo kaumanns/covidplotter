@@ -17,7 +17,7 @@ def _int_or_zero(n):
 
 def _csv(input_file):
     xticklabels = None
-    loc_to_counts = dict()
+    plotkey_to_counts = dict()
 
     with open(input_file, "r") as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
@@ -28,19 +28,19 @@ def _csv(input_file):
                 firstline = False
                 continue
 
-            loc = (row[0] == "" and row[1] or row[0])
-            loc_to_counts[loc] = [_int_or_zero(n) for n in row[4:len(row)]]
+            plotkey = (row[0] == "" and row[1] or row[0])
+            plotkey_to_counts[plotkey] = [_int_or_zero(n) for n in row[4:len(row)]]
 
-    return xticklabels, loc_to_counts
+    return xticklabels, plotkey_to_counts
 
-def _transformation(n, transformation):
-    if transformation == "log":
+def _transformed(n, transformation):
+    if transformation is None:
+        return n
+    elif transformation == "log":
         if n == 0.0:
             return None
         else:
             return math.log(n)
-    elif transformation == "identity":
-        return n
     else:
         exit.sys("Unknown transformation: " + transformation)
 
@@ -51,6 +51,15 @@ def _xtick_offset(num_xticks, num_recent_entries):
         assert(num_recent_entries > 0 and num_recent_entries <= num_xticks)
         return num_recent_entries
 
+def _plot(ax, counts, label, y_fun):
+    ax.plot(
+            [
+                y_fun(count)
+                for count in counts
+                ],
+            label=label
+            )
+
 def main(args):
     # date_to_rows = dict()
     # for entry in os.scandir(args.daily_reports_dir):
@@ -60,9 +69,8 @@ def main(args):
     #             for row in reader:
     #                 date_to_rows[entry.name].append(row)
 
-    xticklabels, loc_to_counts = _csv(args.input)
-
-    loc_to_scale = json.load(open(args.scaling_map, "r"))
+    xticklabels, plotkey_to_counts = _csv(args.input)
+    plotkey_to_scales = json.load(open(args.scale_map, "r"))
 
     xtick_offset = _xtick_offset(len(xticklabels), args.num_recent_entries)
 
@@ -71,17 +79,33 @@ def main(args):
     xtick_end = len(xticklabels)
     xtick_begin = xtick_end - xtick_offset
 
-    for loc, counts in loc_to_counts.items():
-        if loc in loc_to_scale:
-            ax.plot(
-                    [
-                        _transformation(float(count) / (args.precision_factor * float(loc_to_scale[loc])), args.transformation)
-                        for count in counts[xtick_begin:xtick_end]
-                        ],
-                    label=loc
-                    )
+    for plotkey, counts in plotkey_to_counts.items():
+        if plotkey in plotkey_to_scales:
+            if args.scale_key is None:
+                _plot(
+                        ax,
+                        counts[xtick_begin:xtick_end],
+                        label=plotkey,
+                        y_fun=lambda x: _transformed(x, args.transformation)
+                        )
+            elif args.scale_key in plotkey_to_scales[plotkey]:
+                _plot(
+                        ax,
+                        counts[xtick_begin:xtick_end],
+                        label=plotkey,
+                        y_fun=lambda x: _transformed(x / (args.scale_factor * plotkey_to_scales[plotkey][args.scale_key]), args.transformation)
+                        )
 
-    ax.set_ylabel(args.ylabel)
+    ax.set_ylabel(
+            (args.transformation is not None and args.transformation + "(" or "")
+            + args.ylabel
+            + (args.scale_key is not None and " / " or "")
+            + (args.scale_factor != 1.0 and " (" or "")
+            + (args.scale_key is not None and args.scale_key or "")
+            + (args.scale_factor != 1.0 and " * " + str(args.scale_factor) + ")" or "")
+            + (args.transformation is not None and ")" or "")
+            )
+
     ax.set_xlabel(args.xlabel)
 
     ax.set_title(args.title)
@@ -104,17 +128,20 @@ if __name__ == "__main__":
     parser.add_argument("--output", "-o", type=str, action="store", required=True,
             help="Output file path (PNG)")
 
-    parser.add_argument("--xlabel", "-x", type=str, action="store", default="Date",
+    parser.add_argument("--xlabel", "-x", type=str, action="store", required=True,
             help="Label for x-axis")
 
-    parser.add_argument("--ylabel", "-y", type=str, action="store", default="Count",
+    parser.add_argument("--ylabel", "-y", type=str, action="store", required=True,
             help="Label for y-axis")
 
-    parser.add_argument("--scaling-map", "-s", type=str, action="store", required=True,
-            help="Path to JSON map from location to scaling factors")
+    parser.add_argument("--scale-key", "-k", type=str, action="store", default=None,
+            help="Key to scale factors to be used, as defined in scale map")
 
-    parser.add_argument("--precision-factor", "-p", type=float, action="store", default=1.0,
-            help="Precision factor applied to scaling (use it to avoid precision errors with large numbers such as population size)")
+    parser.add_argument("--scale-map", "-m", type=str, action="store", required=True,
+            help="Path to scale map (JASON) mapping plot keys to scale factors")
+
+    parser.add_argument("--scale-factor", "-p", type=float, action="store", default=1.0,
+            help="Precision factor applied to scale (use it to avoid precision errors when scaling large y values)")
 
     parser.add_argument("--title", "-t", type=str, action="store", required=True,
             help="Title string")
@@ -122,7 +149,7 @@ if __name__ == "__main__":
     parser.add_argument("--num-recent-entries", "-r", type=int, action="store", default=None,
             help="Number of recent entries to plot (default: all)")
 
-    parser.add_argument("--transformation", "-f", type=str, action="store", choices=["identity", "log"], default="identity",
-            help="Apply transformation function (default: identity)")
+    parser.add_argument("--transformation", "-f", type=str, action="store", choices=["log"], default=None,
+            help="Apply transformation function")
 
     main(parser.parse_args())
