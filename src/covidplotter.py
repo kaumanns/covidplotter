@@ -28,7 +28,7 @@ def _csv(input_file):
                 firstline = False
                 continue
 
-            plotkey = (row[0] == "" and row[1] or row[0])
+            plotkey = row[1] + (row[0] != "" and "/" + row[0] or "")
             plotkey_to_counts[plotkey] = [_int_or_zero(n) for n in row[4:len(row)]]
 
     return xticklabels, plotkey_to_counts
