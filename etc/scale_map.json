@@ -1,50 +1,67 @@
 {
     "Italy": {
         "population_size": 60317546,
-        "population_density_per_sqkm": 201.3
+        "population_density_per_sqkm": 201.3,
+        "median_age": 45.5
     },
     "Spain": {
         "population_size": 46733038,
-        "population_density_per_sqkm": 92.0
+        "population_density_per_sqkm": 92.0,
+        "median_age": 42.7
     },
     "France": {
         "population_size": 67022000,
-        "population_density_per_sqkm": 104.0
+        "population_density_per_sqkm": 104.0,
+        "median_age": 41.4
     },
     "Austria": {
         "population_size": 8902600,
-        "population_density_per_sqkm": 106.0
+        "population_density_per_sqkm": 106.0,
+        "median_age": 44.0
     },
     "Germany": {
         "population_size": 83149300,
-        "population_density_per_sqkm": 232.0
+        "population_density_per_sqkm": 232.0,
+        "median_age": 47.1
     },
     "Switzerland": {
         "population_size": 8570146,
-        "population_density_per_sqkm": 207.0
+        "population_density_per_sqkm": 207.0,
+        "median_age": 42.4
+    },
+    "United Kingdom": {
+        "population_size": 67545757,
+        "population_density_per_sqkm": 270.7,
+        "median_age": 40.5
     },
     "US": {
         "population_size": 328239523,
-        "population_density_per_sqkm": 33.6
+        "population_density_per_sqkm": 33.6,
+        "median_age": 38.1
     },
     "Florida": {
         "population_size": 21477737,
-        "population_density_per_sqkm": 121.0
+        "population_density_per_sqkm": 121.0,
+        "median_age": 42.2
     },
     "New York": {
         "population_size": 19453561,
-        "population_density_per_sqkm": 159.0
+        "population_density_per_sqkm": 159.0,
+        "median_age": 39.0
     },
     "California": {
         "population_size": 39512223,
-        "population_density_per_sqkm": 97.9
+        "population_density_per_sqkm": 97.9,
+        "median_age": 36.9
     },
     "Washington": {
         "population_size": 7614893,
-        "population_density_per_sqkm": 39.6
+        "population_density_per_sqkm": 39.6,
+        "median_age": 37.7
     },
     "Massachusetts": {
         "population_size": 6939373,
-        "population_density_per_sqkm": 324.0
+        "population_density_per_sqkm": 324.0,
+        "median_age": 39.4
     }
 }
