@@ -113,6 +113,8 @@ def main(args):
     ax.set_xticks([0, xtick_offset-1])
     ax.set_xticklabels([xticklabels[xtick_begin], xticklabels[xtick_end-1]])
 
+    ax.grid()
+
     plt.legend()
     plt.savefig(args.output)
 

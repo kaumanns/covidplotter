@@ -51,6 +51,10 @@ Notes:
 
 ![](out/time_series_covid19_confirmed_global.@age.png)
 
+#### Confirmed scaled by land area (in sqkm)
+
+![](out/time_series_covid19_confirmed_global.@land.png)
+
 ---
 
 #### Confirmed transformed by natural logarithm
@@ -59,6 +63,7 @@ Notes:
 ![](out/time_series_covid19_confirmed_global.@population@log.png)
 ![](out/time_series_covid19_confirmed_global.@density@log.png)
 ![](out/time_series_covid19_confirmed_global.@age@log.png)
+![](out/time_series_covid19_confirmed_global.@land@log.png)
 
 ---
 ---
@@ -79,6 +84,10 @@ Notes:
 
 ![](out/time_series_covid19_deaths_global.@age.png)
 
+#### Deaths scaled by land area (in sqkm)
+
+![](out/time_series_covid19_deaths_global.@land.png)
+
 ---
 
 #### Deaths transformed by natural logarithm
@@ -87,6 +96,7 @@ Notes:
 ![](out/time_series_covid19_deaths_global.@population@log.png)
 ![](out/time_series_covid19_deaths_global.@density@log.png)
 ![](out/time_series_covid19_deaths_global.@age@log.png)
+![](out/time_series_covid19_deaths_global.@land@log.png)
 
 ---
 ---
@@ -107,6 +117,10 @@ Notes:
 
 ![](out/time_series_covid19_recovered_global.@age.png)
 
+#### Recovered scaled by land area
+
+![](out/time_series_covid19_recovered_global.@land.png)
+
 ---
 
 #### Recovered transformed by natural logarithm
@@ -115,3 +129,4 @@ Notes:
 ![](out/time_series_covid19_recovered_global.@population@log.png)
 ![](out/time_series_covid19_recovered_global.@density@log.png)
 ![](out/time_series_covid19_recovered_global.@age@log.png)
+![](out/time_series_covid19_recovered_global.@land@log.png)

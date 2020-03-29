@@ -13,7 +13,7 @@ vpath %.json etc
 
 csv_basename = time_series_covid19_$(1)_global
 
-targets = $(addprefix out/$(call csv_basename,$(1)),.png .@log.png .@population.png .@population@log.png .@density.png .@density@log.png .@age.png .@age@log.png)
+targets = $(addprefix out/$(call csv_basename,$(1)),.png .@log.png .@population.png .@population@log.png .@density.png .@density@log.png .@age.png .@age@log.png .@land.png .@land@log.png)
 
 define plot =
 	$(COVIDPLOTTER) \
@@ -64,3 +64,9 @@ clean:
 
 %.@age@log.png: $$(notdir $$*).csv $(SCALE_MAP)
 	$(call plot,$<,$(word 2,$^),median_age,$@,$(notdir $*),1.0,log,$(NUM_RECENT_ENTRIES))
+
+%.@land.png: $$(notdir $$*).csv $(SCALE_MAP)
+	$(call plot,$<,$(word 2,$^),land_area_in_sqkm,$@,$(notdir $*),1.0,,$(NUM_RECENT_ENTRIES))
+
+%.@land@log.png: $$(notdir $$*).csv $(SCALE_MAP)
+	$(call plot,$<,$(word 2,$^),land_area_in_sqkm,$@,$(notdir $*),1.0,log,$(NUM_RECENT_ENTRIES))
