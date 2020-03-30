@@ -68,7 +68,7 @@ clean:
 	$(call plot,$<,$(word 2,$^),median_age,$@,$(notdir $*),1.0,log,$(NUM_RECENT_ENTRIES))
 
 %.@land.png: $$(notdir $$*).csv $(SCALE_MAP)
-	$(call plot,$<,$(word 2,$^),land_area_in_sqkm,$@,$(notdir $*),1.0,,$(NUM_RECENT_ENTRIES))
+	$(call plot,$<,$(word 2,$^),land_area_in_sqkm,$@,$(notdir $*),0.0001,,$(NUM_RECENT_ENTRIES))
 
 %.@land@log.png: $$(notdir $$*).csv $(SCALE_MAP)
-	$(call plot,$<,$(word 2,$^),land_area_in_sqkm,$@,$(notdir $*),1.0,log,$(NUM_RECENT_ENTRIES))
+	$(call plot,$<,$(word 2,$^),land_area_in_sqkm,$@,$(notdir $*),0.0001,log,$(NUM_RECENT_ENTRIES))
