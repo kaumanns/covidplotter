@@ -13,7 +13,7 @@ vpath %.json etc
 
 csv_basename = time_series_covid19_$(1)_global
 
-targets = $(addprefix out/$(call csv_basename,$(1)),.png .@log.png .@population.png .@population@log.png .@density.png .@density@log.png .@age.png .@age@log.png .@land.png .@land@log.png)
+targets = $(addprefix $(1)/$(call csv_basename,$(1)),.png .@log.png .@population.png .@population@log.png .@density.png .@density@log.png .@age.png .@age@log.png .@land.png .@land@log.png)
 
 define plot =
 	$(COVIDPLOTTER) \
@@ -35,7 +35,9 @@ all: $(SUBMODULE_ROOT).pull
 	$(MAKE) $(call targets,confirmed) $(call targets,deaths) $(call targets,recovered)
 
 clean:
-	rm out/*.png
+	rm confirmed/*.png
+	rm deaths/*.png
+	rm recovered/*.png
 
 %.pull:
 	cd $* \

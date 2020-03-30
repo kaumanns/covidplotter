@@ -7,7 +7,15 @@ The tool checks a local clone of the time series data for updates and generates 
 Scaling factors are defined per country in separate JSON configuration files.
 The currently provided scaling factors are taken from English Wikipedia.
 
-## Tested requirements
+## Plots
+
+- [Confirmed cases](./confirmed/)
+- [Deaths](./deaths/)
+- [Recovered](./recovered/)
+
+## How to recreate the plots
+
+### Tested requirements
 
 - OS: Raspbian Buster
 - GNU bash 5.0.3(1)
@@ -16,13 +24,13 @@ The currently provided scaling factors are taken from English Wikipedia.
 - Python 3.7.3
     - matplotlib 3
 
-## Installation
+### Installation
 
 ```
 git clone <repository url>
 ```
 
-## Usage
+### Usage
 
 ```
 make
@@ -32,101 +40,3 @@ Notes:
 
 - In order to change the countries and/or scaling factors, modify the JSON configuration in `etc/scale_map.json`.
 - If new configurations are provided, modify `Makefile` accordingly. Run `src/covidplotter.py` for more options.
-
-## Plots
-
-### Confirmed
-
-![](out/time_series_covid19_confirmed_global.png)
-
-#### Confirmed scaled by population size
-
-![](out/time_series_covid19_confirmed_global.@population.png)
-
-#### Confirmed scaled by population density (per sqkm)
-
-![](out/time_series_covid19_confirmed_global.@density.png)
-
-#### Confirmed scaled by median age
-
-![](out/time_series_covid19_confirmed_global.@age.png)
-
-#### Confirmed scaled by land area (in sqkm)
-
-![](out/time_series_covid19_confirmed_global.@land.png)
-
----
-
-#### Confirmed transformed by natural logarithm
-
-![](out/time_series_covid19_confirmed_global.@log.png)
-![](out/time_series_covid19_confirmed_global.@population@log.png)
-![](out/time_series_covid19_confirmed_global.@density@log.png)
-![](out/time_series_covid19_confirmed_global.@age@log.png)
-![](out/time_series_covid19_confirmed_global.@land@log.png)
-
----
----
-
-### Deaths
-
-![](out/time_series_covid19_deaths_global.png)
-
-#### Deaths scaled by population size
-
-![](out/time_series_covid19_deaths_global.@population.png)
-
-#### Deaths scaled by population density (per sqkm)
-
-![](out/time_series_covid19_deaths_global.@density.png)
-
-#### Deaths scaled by median age
-
-![](out/time_series_covid19_deaths_global.@age.png)
-
-#### Deaths scaled by land area (in sqkm)
-
-![](out/time_series_covid19_deaths_global.@land.png)
-
----
-
-#### Deaths transformed by natural logarithm
-
-![](out/time_series_covid19_deaths_global.@log.png)
-![](out/time_series_covid19_deaths_global.@population@log.png)
-![](out/time_series_covid19_deaths_global.@density@log.png)
-![](out/time_series_covid19_deaths_global.@age@log.png)
-![](out/time_series_covid19_deaths_global.@land@log.png)
-
----
----
-
-### Recovered
-
-![](out/time_series_covid19_recovered_global.png)
-
-#### Recovered scaled by population size
-
-![](out/time_series_covid19_recovered_global.@population.png)
-
-#### Recovered scaled by population density (per sqkm)
-
-![](out/time_series_covid19_recovered_global.@density.png)
-
-#### Recovered scaled by median age
-
-![](out/time_series_covid19_recovered_global.@age.png)
-
-#### Recovered scaled by land area
-
-![](out/time_series_covid19_recovered_global.@land.png)
-
----
-
-#### Recovered transformed by natural logarithm
-
-![](out/time_series_covid19_recovered_global.@log.png)
-![](out/time_series_covid19_recovered_global.@population@log.png)
-![](out/time_series_covid19_recovered_global.@density@log.png)
-![](out/time_series_covid19_recovered_global.@age@log.png)
-![](out/time_series_covid19_recovered_global.@land@log.png)
