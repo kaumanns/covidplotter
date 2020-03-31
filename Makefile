@@ -17,16 +17,19 @@ targets = $(addprefix $(1)/$(call csv_basename,$(1)),.png .@log.png .@population
 
 define plot =
 	$(COVIDPLOTTER) \
-		--input              $(1) \
-		--scale-map          $(2) \
+		--input $(1) \
+		--scale-map $(2) \
 		$(if $(3),--scale-key $(3)) \
-		--output             $(4) \
-		--title              $(5) \
-		--scale-factor       $(6) \
+		--output $(4) \
+		--title $(5) \
+		--scale-factor $(6) \
 		$(if $(7),--yscale $(7)) \
 		--num-recent-entries $(8) \
-		--xlabel 			 Date \
-		--ylabel             Count
+		--key-fields 1 0 \
+		--key-fields-delimiter "/" \
+		--content-fields-begin 4 \
+		--xlabel Date \
+		--ylabel Count
 endef
 
 .SECONDEXPANSION:

@@ -17,21 +17,22 @@ def _int_or_zero(n):
     else:
         return int(n)
 
-def _csse_csv(input_file):
+def _csv(input_file, key_fields, key_fields_delimiter, content_fields_begin):
     xticklabels = None
     plotkey_to_counts = dict()
 
     with open(input_file, "r") as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
+
         firstline = True
         for row in csvreader:
             if firstline:
-                xticklabels = row[4:len(row)]
+                xticklabels = row[content_fields_begin:len(row)]
                 firstline = False
                 continue
 
-            plotkey = row[1] + (row[0] != "" and "/" + row[0] or "")
-            plotkey_to_counts[plotkey] = [_int_or_zero(n) for n in row[4:len(row)]]
+            plotkey = key_fields_delimiter.join([row[i] for i in key_fields if row[i] != ""])
+            plotkey_to_counts[plotkey] = [_int_or_zero(n) for n in row[content_fields_begin:len(row)]]
 
     return xticklabels, plotkey_to_counts
 
@@ -123,7 +124,7 @@ def _define_yaxis(ax, min_yvalue, max_yvalue, ysize, yscale, ylabel, scale_key, 
     ax.tick_params(right=True, labelright=True)
 
 def _main(args):
-    xticklabels, plotkey_to_counts = _csse_csv(args.input)
+    xticklabels, plotkey_to_counts = _csv(args.input, args.key_fields, args.key_fields_delimiter, args.content_fields_begin)
 
     with open(args.scale_map, "r") as jsonfile:
         plotkey_to_scales = json.load(jsonfile)
@@ -156,6 +157,15 @@ if __name__ == "__main__":
 
     parser.add_argument("--output", "-o", type=str, action="store", required=True,
             help="Output file path (PNG)")
+
+    parser.add_argument("--key-fields", nargs="+", type=int, action="store", required=True,
+            help="Indices of fields whose values are parse as keys")
+
+    parser.add_argument("--key-fields-delimiter", type=str, action="store", default="/",
+            help="Delimiter string for concatenating key field values")
+
+    parser.add_argument("--content-fields-begin", type=int, action="store", required=True,
+            help="Index of first content field")
 
     parser.add_argument("--xlabel", "-x", type=str, action="store", required=True,
             help="Label for x-axis")
