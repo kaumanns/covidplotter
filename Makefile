@@ -23,7 +23,7 @@ define plot =
 		--output             $(4) \
 		--title              $(5) \
 		--scale-factor       $(6) \
-		$(if $(7),--transformation $(7)) \
+		$(if $(7),--yscale $(7)) \
 		--num-recent-entries $(8) \
 		--xlabel 			 Date \
 		--ylabel             Count

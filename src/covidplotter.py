@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
 import os
+import re
 import csv
 import sys
 import json
 import math
 import argparse
 
+import numpy as np
 import matplotlib.pyplot as plt
 
 def _int_or_zero(n):
@@ -15,7 +17,7 @@ def _int_or_zero(n):
     else:
         return int(n)
 
-def _csv(input_file):
+def _csse_csv(input_file):
     xticklabels = None
     plotkey_to_counts = dict()
 
@@ -33,99 +35,124 @@ def _csv(input_file):
 
     return xticklabels, plotkey_to_counts
 
-def _transformed(n, transformation):
-    if transformation is None:
-        return n
-    elif transformation == "log":
-        if n == 0.0:
-            return None
-        else:
-            return math.log(n)
-    else:
-        exit.sys("Unknown transformation: " + transformation)
-
-def _xtick_offset(num_xticks, num_recent_entries):
+def _xvalue_offset(num_xticks, num_recent_entries):
     if num_recent_entries is None:
         return num_xticks
     else:
-        assert(num_recent_entries > 0 and num_recent_entries <= num_xticks)
+        assert num_recent_entries > 0 and num_recent_entries <= num_xticks, "Invalid value for --num-recent-entries."
         return num_recent_entries
 
-def _plot(ax, counts, label, y_fun):
-    ax.plot(
-            [
-                y_fun(count)
-                for count in counts
-                ],
-            label=label
-            )
+def _smaller(x, y):
+    if y is None or x < y:
+        return x
+    elif x is None or x >= y:
+        return y
 
-def main(args):
-    # date_to_rows = dict()
-    # for entry in os.scandir(args.daily_reports_dir):
-    #     if entry.path.endswith(".csv"):
-    #         with open(entry.path, "r") as csvfile:
-    #             reader = csv.DictReader(csvfile)
-    #             for row in reader:
-    #                 date_to_rows[entry.name].append(row)
+def _larger(x, y):
+    if y is None or x > y:
+        return x
+    elif x is None or x <= y:
+        return y
 
-    xticklabels, plotkey_to_counts = _csv(args.input)
-    plotkey_to_scales = json.load(open(args.scale_map, "r"))
+def _yvalues(counts, scales, scale_key, scale_factor):
+    if scale_key is None:
+        return counts
+    elif scale_key in scales:
+        return [count / (scale_factor * scales[scale_key]) for count in counts]
+    else:
+        return None
 
-    xtick_offset = _xtick_offset(len(xticklabels), args.num_recent_entries)
+def _plot(ax, plotkey_to_counts, plotkey_to_scales, xvalue_begin, xvalue_end, scale_key, scale_factor):
+    min_yvalue = None
+    max_yvalue = None
 
-    fig, ax = plt.subplots()
+    for plotkey, scales in plotkey_to_scales.items():
+        if plotkey in plotkey_to_counts:
+            yvalues = _yvalues(
+                    plotkey_to_counts[plotkey][xvalue_begin:xvalue_end],
+                    scales,
+                    scale_key,
+                    scale_factor
+                    )
 
-    xtick_end = len(xticklabels)
-    xtick_begin = xtick_end - xtick_offset
-
-    for plotkey, counts in plotkey_to_counts.items():
-        if plotkey in plotkey_to_scales:
-            if args.scale_key is None:
-                _plot(
-                        ax,
-                        counts[xtick_begin:xtick_end],
-                        label=plotkey,
-                        y_fun=lambda x: _transformed(x, args.transformation)
+            if yvalues is not None:
+                min_yvalue = _smaller(min(yvalues), min_yvalue)
+                max_yvalue = _larger(max(yvalues), max_yvalue)
+                ax.plot(
+                        yvalues,
+                        label=plotkey
                         )
-            elif args.scale_key in plotkey_to_scales[plotkey]:
-                _plot(
-                        ax,
-                        counts[xtick_begin:xtick_end],
-                        label=plotkey,
-                        y_fun=lambda x: _transformed(x / (args.scale_factor * plotkey_to_scales[plotkey][args.scale_key]), args.transformation)
-                        )
+
+    return min_yvalue, max_yvalue
+
+def _define_xaxis(ax, xticklabels, xlabel, num_recent_entries):
+    xvalue_end = len(xticklabels)
+    xvalue_begin = xvalue_end - _xvalue_offset(len(xticklabels), num_recent_entries)
+
+    ax.set_xticks(np.arange(0, xvalue_end-xvalue_begin))
+    ax.set_xticklabels(xticklabels[xvalue_begin:xvalue_end])
+
+    ax.tick_params(axis="x", labelrotation=-60)
+
+    ax.set_xlabel(xlabel)
+
+    return xvalue_begin, xvalue_end
+
+def _define_yaxis(ax, min_yvalue, max_yvalue, ysize, yscale, ylabel, scale_key, scale_factor):
+    if yscale is not None:
+        ax.set_yscale(yscale)
+    else:
+        if min_yvalue > 0:
+            min_yvalue = 0
+
+        yfraction = round((max_yvalue - min_yvalue) / (ysize * 2))
+        ax.set_yticks(np.arange(min_yvalue, max_yvalue, step=round(yfraction, -(len(str(yfraction))-1))))
+
+    ax.set_ylim(min_yvalue, max_yvalue)
 
     ax.set_ylabel(
-            (args.transformation is not None and args.transformation + "(" or "")
-            + args.ylabel
-            + (args.scale_key is not None and " / " or "")
-            + (args.scale_factor != 1.0 and " (" or "")
-            + (args.scale_key is not None and args.scale_key or "")
-            + (args.scale_factor != 1.0 and " * " + str(args.scale_factor) + ")" or "")
-            + (args.transformation is not None and ")" or "")
+            (yscale is not None and yscale + "(" or "")
+            + ylabel
+            + (scale_key is not None and " / " or "")
+            + (scale_factor != 1.0 and " (" or "")
+            + (scale_key is not None and scale_key or "")
+            + (scale_factor != 1.0 and " * " + str(scale_factor) + ")" or "")
+            + (yscale is not None and ")" or "")
             )
 
-    ax.set_xlabel(args.xlabel)
+    ax.tick_params(right=True, labelright=True)
+
+def _main(args):
+    xticklabels, plotkey_to_counts = _csse_csv(args.input)
+
+    with open(args.scale_map, "r") as jsonfile:
+        plotkey_to_scales = json.load(jsonfile)
+
+    _, ax = plt.subplots(
+            figsize=args.figsize,
+            dpi=args.dpi
+            )
+
+    xvalue_begin, xvalue_end = _define_xaxis(ax, xticklabels, args.xlabel, args.num_recent_entries)
+
+    min_yvalue, max_yvalue = _plot(ax, plotkey_to_counts, plotkey_to_scales, xvalue_begin, xvalue_end, args.scale_key, args.scale_factor)
+
+    _define_yaxis(ax, min_yvalue, max_yvalue, args.figsize[1], args.yscale, args.ylabel, args.scale_key, args.scale_factor)
+
+    ax.grid(axis="x", color="green", alpha=.3, linewidth=2, linestyle=":")
+    ax.grid(axis="y", color="black", alpha=.5, linewidth=.5)
 
     ax.set_title(args.title)
 
-    ax.set_xticks([0, xtick_offset-1])
-    ax.set_xticklabels([xticklabels[xtick_begin], xticklabels[xtick_end-1]])
-
-    ax.grid()
-
     plt.legend()
+
     plt.savefig(args.output)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Plott COVID-19.')
+    parser = argparse.ArgumentParser(description='Plot COVID-19 cases.')
 
     parser.add_argument("--input", "-i", type=str, action="store", required=True,
             help="Input file path to CSV data by John Hopkins University")
-
-    # parser.add_argument("--daily-reports-dir", "-d", type=str, action="store", required=True,
-    #         help="Path to directory with daily reports (CSV files) by John Hopkins University")
 
     parser.add_argument("--output", "-o", type=str, action="store", required=True,
             help="Output file path (PNG)")
@@ -151,7 +178,17 @@ if __name__ == "__main__":
     parser.add_argument("--num-recent-entries", "-r", type=int, action="store", default=None,
             help="Number of recent entries to plot (default: all)")
 
-    parser.add_argument("--transformation", "-f", type=str, action="store", choices=["log"], default=None,
-            help="Apply transformation function")
+    parser.add_argument("--figsize", "-s", action="store", default="15,15",
+            type=lambda x: type(x)==type("") and re.search("^\d+,\d+$", x) and tuple([int(x) for x in x.split(",")]),
+            help="Figsize option passed to Matplotlib, as comma-separated tupel of integers")
 
-    main(parser.parse_args())
+    parser.add_argument("--dpi", "-d", type=int, action="store", default=80,
+            help="DPI option passed to Matplotlib")
+
+    parser.add_argument("--ytickstep", type=int, action="store", default=None,
+            help="Steps for y ticks ")
+
+    parser.add_argument("--yscale", "-f", type=str, action="store", default=None,
+            help="Yscale option passed to Matplotlib")
+
+    _main(parser.parse_args())
