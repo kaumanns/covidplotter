@@ -25,9 +25,9 @@ define plot =
 		--scale-factor $(6) \
 		$(if $(7),--yscale $(7)) \
 		--num-recent-entries $(8) \
-		--key-fields 1 0 \
+		--key-fields-indices 1 0 \
 		--key-fields-delimiter "/" \
-		--content-fields-begin 4 \
+		--value-fields-begin 4 \
 		--xlabel Date \
 		--ylabel Count
 endef

@@ -8,6 +8,8 @@ import json
 import math
 import argparse
 
+# from collections import defaultdict
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -17,9 +19,9 @@ def _int_or_zero(n):
     else:
         return int(n)
 
-def _csv(input_file, key_fields, key_fields_delimiter, content_fields_begin):
+def _csv(input_file, key_fields_indices, key_fields_delimiter, value_fields_begin):
     xticklabels = None
-    plotkey_to_counts = dict()
+    plotkey_to_values = dict()
 
     with open(input_file, "r") as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
@@ -27,14 +29,21 @@ def _csv(input_file, key_fields, key_fields_delimiter, content_fields_begin):
         firstline = True
         for row in csvreader:
             if firstline:
-                xticklabels = row[content_fields_begin:len(row)]
+                xticklabels = row[value_fields_begin:len(row)]
                 firstline = False
                 continue
 
-            plotkey = key_fields_delimiter.join([row[i] for i in key_fields if row[i] != ""])
-            plotkey_to_counts[plotkey] = [_int_or_zero(n) for n in row[content_fields_begin:len(row)]]
+            plotkey = key_fields_delimiter.join([row[i] for i in key_fields_indices if row[i] != ""])
 
-    return xticklabels, plotkey_to_counts
+            values = [_int_or_zero(n) for n in row[value_fields_begin:len(row)]]
+
+            if plotkey in plotkey_to_values:
+                assert len(plotkey_to_values[plotkey].items()) == len(values), "Inconsistent number of value columns in CSV at row: {}".format(",".join(row))
+                plotkey_to_values[plotkey] = list(map(lambda x,y: x+y, plotkey_to_values[plotkey], values))
+            else:
+                plotkey_to_values[plotkey] = values
+
+    return xticklabels, plotkey_to_values
 
 def _xvalue_offset(num_xticks, num_recent_entries):
     if num_recent_entries is None:
@@ -63,14 +72,14 @@ def _yvalues(counts, scales, scale_key, scale_factor):
     else:
         return None
 
-def _plot(ax, plotkey_to_counts, plotkey_to_scales, xvalue_begin, xvalue_end, scale_key, scale_factor):
+def _plot(ax, plotkey_to_values, plotkey_to_scales, xvalue_begin, xvalue_end, scale_key, scale_factor):
     min_yvalue = None
     max_yvalue = None
 
     for plotkey, scales in plotkey_to_scales.items():
-        if plotkey in plotkey_to_counts:
+        if plotkey in plotkey_to_values:
             yvalues = _yvalues(
-                    plotkey_to_counts[plotkey][xvalue_begin:xvalue_end],
+                    plotkey_to_values[plotkey][xvalue_begin:xvalue_end],
                     scales,
                     scale_key,
                     scale_factor
@@ -124,7 +133,7 @@ def _define_yaxis(ax, min_yvalue, max_yvalue, ysize, yscale, ylabel, scale_key, 
     ax.tick_params(right=True, labelright=True)
 
 def _main(args):
-    xticklabels, plotkey_to_counts = _csv(args.input, args.key_fields, args.key_fields_delimiter, args.content_fields_begin)
+    xticklabels, plotkey_to_values = _csv(args.input, args.key_fields_indices, args.key_fields_delimiter, args.value_fields_begin)
 
     with open(args.scale_map, "r") as jsonfile:
         plotkey_to_scales = json.load(jsonfile)
@@ -136,7 +145,7 @@ def _main(args):
 
     xvalue_begin, xvalue_end = _define_xaxis(ax, xticklabels, args.xlabel, args.num_recent_entries)
 
-    min_yvalue, max_yvalue = _plot(ax, plotkey_to_counts, plotkey_to_scales, xvalue_begin, xvalue_end, args.scale_key, args.scale_factor)
+    min_yvalue, max_yvalue = _plot(ax, plotkey_to_values, plotkey_to_scales, xvalue_begin, xvalue_end, args.scale_key, args.scale_factor)
 
     _define_yaxis(ax, min_yvalue, max_yvalue, args.figsize[1], args.yscale, args.ylabel, args.scale_key, args.scale_factor)
 
@@ -158,14 +167,14 @@ if __name__ == "__main__":
     parser.add_argument("--output", "-o", type=str, action="store", required=True,
             help="Output file path (PNG)")
 
-    parser.add_argument("--key-fields", nargs="+", type=int, action="store", required=True,
+    parser.add_argument("--key-fields-indices", nargs="+", type=int, action="store", required=True,
             help="Indices of fields whose values are parse as keys")
 
     parser.add_argument("--key-fields-delimiter", type=str, action="store", default="/",
             help="Delimiter string for concatenating key field values")
 
-    parser.add_argument("--content-fields-begin", type=int, action="store", required=True,
-            help="Index of first content field")
+    parser.add_argument("--value-fields-begin", type=int, action="store", required=True,
+            help="Index of first value field")
 
     parser.add_argument("--xlabel", "-x", type=str, action="store", default="",
             help="Label for x-axis")
