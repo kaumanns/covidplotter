@@ -109,7 +109,7 @@ def _define_yaxis(ax, min_yvalue, max_yvalue, ysize, yscale, ylabel, scale_key, 
         yfraction = round((max_yvalue - min_yvalue) / (ysize * 2))
         ax.set_yticks(np.arange(min_yvalue, max_yvalue, step=round(yfraction, -(len(str(yfraction))-1))))
 
-    ax.set_ylim(min_yvalue, max_yvalue)
+        ax.set_ylim(min_yvalue, max_yvalue)
 
     ax.set_ylabel(
             (yscale is not None and yscale + "(" or "")
