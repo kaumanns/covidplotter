@@ -32,8 +32,10 @@ git clone <repository url>
 
 ### Usage
 
+Plot, optionally using 4 threads via `-j` option:
+
 ```
-make
+make -j 4
 ```
 
 Notes:
