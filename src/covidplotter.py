@@ -167,10 +167,10 @@ if __name__ == "__main__":
     parser.add_argument("--content-fields-begin", type=int, action="store", required=True,
             help="Index of first content field")
 
-    parser.add_argument("--xlabel", "-x", type=str, action="store", required=True,
+    parser.add_argument("--xlabel", "-x", type=str, action="store", default="",
             help="Label for x-axis")
 
-    parser.add_argument("--ylabel", "-y", type=str, action="store", required=True,
+    parser.add_argument("--ylabel", "-y", type=str, action="store", default="",
             help="Label for y-axis")
 
     parser.add_argument("--scale-key", "-k", type=str, action="store", default=None,
@@ -182,7 +182,7 @@ if __name__ == "__main__":
     parser.add_argument("--scale-factor", "-p", type=float, action="store", default=1.0,
             help="Precision factor applied to scale (use it to avoid precision errors when scaling large y values)")
 
-    parser.add_argument("--title", "-t", type=str, action="store", required=True,
+    parser.add_argument("--title", "-t", type=str, action="store", default="",
             help="Title string")
 
     parser.add_argument("--num-recent-entries", "-r", type=int, action="store", default=None,
