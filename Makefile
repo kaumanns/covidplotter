@@ -25,9 +25,9 @@ define plot =
 		--scale-factor $(6) \
 		$(if $(7),--yscale $(7)) \
 		--num-recent-entries $(8) \
-		--key-fields-indices 1 0 \
-		--key-fields-delimiter "/" \
-		--value-fields-begin 4 \
+		--key-field-names "Country/Region" "Province/State" "Country_Region" "Province_State" \
+		--first-value-field-name "1/22/20" "1/22/2020" \
+		--key-delimiter "/" \
 		--xlabel Date \
 		--ylabel Count
 endef
