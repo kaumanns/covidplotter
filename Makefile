@@ -1,6 +1,6 @@
 SHELL = /bin/bash
 GIT = /usr/bin/git
-COVIDPLOTTER = src/covidplotter.py
+TABLEPLOTTER = tableplotter/tableplotter.py
 
 NUM_RECENT_ENTRIES = 30
 SCALE_MAP = scale_map.json
@@ -9,14 +9,13 @@ SUBMODULE_ROOT = COVID-19
 CSV_HOME = $(SUBMODULE_ROOT)/csse_covid_19_data/csse_covid_19_time_series
 
 vpath %.csv $(CSV_HOME) confirmed deaths recovered
-vpath %.json etc
 
 csv_basename = time_series_covid19_$(1)
 
 targets = $(addprefix $(1)/$(call csv_basename,$(1)),.png .@log.png .@population.png .@population@log.png .@density.png .@density@log.png .@age.png .@age@log.png .@land.png .@land@log.png)
 
 define plot =
-	$(COVIDPLOTTER) \
+	$(TABLEPLOTTER) \
 		--input $(1) \
 		--scale-map $(2) \
 		$(if $(3),--scale-key $(3)) \
@@ -80,7 +79,7 @@ clean:
 
 define CSV_template
 $(1)/time_series_covid19_$(1).csv: time_series_covid19_$(1)_global.csv $(if $(4),time_series_covid19_$(1)_US.csv)
-	src/merge_csse_time_series.py \
+	./merge_csse_time_series.py \
 		--primary-input $$(word 1,$$^) \
 		--primary-key-fields $(2) \
 		--primary-value-fields-begin $(3) \
