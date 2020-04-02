@@ -71,6 +71,36 @@
         "median_age": 37.7,
         "land_area_in_sqkm": 172119
     },
+    "US/New Jersey": {
+        "population_size": 8882190,
+        "population_density_per_sqkm": 467,
+        "median_age": 40.0,
+        "land_area_in_sqkm": 19047.34
+    },
+    "US/Michigan": {
+        "population_size": 9883635,
+        "population_density_per_sqkm": 67.1,
+        "median_age": 39.8,
+        "land_area_in_sqkm": 146435
+    },
+    "US/Louisiana": {
+        "population_size": 4648794,
+        "population_density_per_sqkm": 34.6,
+        "median_age": 37.2,
+        "land_area_in_sqkm": 112927
+    },
+    "US/Illinois": {
+        "population_size": 12671821,
+        "population_density_per_sqkm": 89.4,
+        "median_age": 38.3,
+        "land_area_in_sqkm": 143969
+    },
+    "US/Pennsylvania": {
+        "population_size": 12801989,
+        "population_density_per_sqkm": 110,
+        "median_age": 40.8,
+        "land_area_in_sqkm": 116074
+    },
     "US/Massachusetts": {
         "population_size": 6939373,
         "population_density_per_sqkm": 324.0,

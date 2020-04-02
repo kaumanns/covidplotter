@@ -38,14 +38,14 @@ def _yvalues(counts, scales, scale_key, scale_factor):
     else:
         return None
 
-def _plot(ax, plotkey_to_values, plotkey_to_scales, xvalue_begin, xvalue_end, scale_key, scale_factor):
+def _plot(ax, label_to_values, label_to_scales, xvalue_begin, xvalue_end, scale_key, scale_factor):
     min_yvalue = None
     max_yvalue = None
 
-    for plotkey, scales in plotkey_to_scales.items():
-        if plotkey in plotkey_to_values:
+    for label, scales in label_to_scales.items():
+        if label in label_to_values:
             yvalues = _yvalues(
-                    plotkey_to_values[plotkey][xvalue_begin:xvalue_end],
+                    label_to_values[label][xvalue_begin:xvalue_end],
                     scales,
                     scale_key,
                     scale_factor
@@ -54,9 +54,16 @@ def _plot(ax, plotkey_to_values, plotkey_to_scales, xvalue_begin, xvalue_end, sc
             if yvalues is not None:
                 min_yvalue = _smaller(min(yvalues), min_yvalue)
                 max_yvalue = _larger(max(yvalues), max_yvalue)
+
+                if len(label.split("/")) > 1:
+                    linestyle = ":"
+                else:
+                    linestyle = "-"
+
                 ax.plot(
                         yvalues,
-                        label=plotkey
+                        label=label,
+                        linestyle=linestyle
                         )
 
     return min_yvalue, max_yvalue
@@ -103,7 +110,9 @@ def _main(args):
         rows = list(csv.reader(csvfile, delimiter=','))
 
     with open(args.scale_map, "r") as jsonfile:
-        plotkey_to_scales = json.load(jsonfile)
+        label_to_scales = json.load(jsonfile)
+
+    plt.set_cmap("hsv")
 
     _, ax = plt.subplots(
             figsize=args.figsize,
@@ -112,12 +121,12 @@ def _main(args):
 
     xvalue_begin, xvalue_end = _define_xaxis(ax, rows[0][1:], args.xlabel, args.num_recent_entries)
 
-    min_yvalue, max_yvalue = _plot(ax, {row[0]: [int(n) for n in row[1:]] for row in rows[1:]}, plotkey_to_scales, xvalue_begin, xvalue_end, args.scale_key, args.scale_factor)
+    min_yvalue, max_yvalue = _plot(ax, {row[0]: [int(n) for n in row[1:]] for row in rows[1:]}, label_to_scales, xvalue_begin, xvalue_end, args.scale_key, args.scale_factor)
 
     _define_yaxis(ax, min_yvalue, max_yvalue, args.figsize[1], args.yscale, args.ylabel, args.scale_key, args.scale_factor)
 
-    ax.grid(axis="x", color="green", alpha=.3, linewidth=2, linestyle=":")
-    ax.grid(axis="y", color="black", alpha=.5, linewidth=.5)
+    ax.grid(axis="x", color="black", alpha=.3, linewidth=.5, linestyle="-")
+    ax.grid(axis="y", color="black", alpha=.5, linewidth=.5, linestyle="-")
 
     ax.set_title(args.title)
 
