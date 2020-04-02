@@ -11,52 +11,6 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-def _int_or_zero(n):
-    if n == "":
-        return 0
-    else:
-        return int(n)
-
-def _csv(input_file, key_field_names, key_delimiter, first_value_field_names):
-    value_labels = None
-    plotkey_to_values = dict()
-
-    with open(input_file, "r") as csvfile:
-        csvreader = csv.reader(csvfile, delimiter=',')
-
-        firstline = True
-        key_field_indices = None
-        value_fields_begin = None
-
-        for row in csvreader:
-            if firstline:
-                try:
-                    value_fields_begin = [i for i in range(0,len(row)) if row[i] in first_value_field_names][0]
-                except IndexError:
-                    sys.stderr.write("Error: None of these first value field names could be found in the input files: {}\n".format(", ".join(first_value_field_names)))
-                    sys.exit(1)
-
-                key_field_indices = [i for i in range(0,value_fields_begin) if row[i] in key_field_names]
-
-                assert len(key_field_indices) > 0, "None of these key field names could be found in the input files: {}\n".format(", ".join(key_field_names))
-
-                value_labels = row[value_fields_begin:len(row)]
-
-                firstline = False
-                continue
-
-            plotkey = key_delimiter.join([row[i] for i in key_field_indices if row[i] != ""])
-
-            values = [_int_or_zero(n) for n in row[value_fields_begin:len(row)]]
-
-            if plotkey in plotkey_to_values:
-                assert len(plotkey_to_values[plotkey].items()) == len(values), "Inconsistent number of value columns in CSV at row: {}".format(",".join(row))
-                plotkey_to_values[plotkey] = list(map(lambda x,y: x+y, plotkey_to_values[plotkey], values))
-            else:
-                plotkey_to_values[plotkey] = values
-
-    return value_labels, plotkey_to_values
-
 def _xvalue_offset(num_xticks, num_recent_entries):
     if num_recent_entries is None:
         return num_xticks
@@ -145,19 +99,8 @@ def _define_yaxis(ax, min_yvalue, max_yvalue, ysize, yscale, ylabel, scale_key, 
     ax.tick_params(right=True, labelright=True)
 
 def _main(args):
-    xticklabels = None
-    plotkey_to_values = dict()
-    for input_file in args.inputs:
-        _xticklabels, _plotkey_to_values = _csv(input_file, args.key_field_names, args.key_delimiter, args.first_value_field_name)
-
-        if xticklabels is None:
-            xticklabels = _xticklabels
-        else:
-            assert len(xticklabels) == len(_xticklabels), "Number of value fields ({}) in file {} is inconsistent compared to previous files ({})".format(len(_xticklabels), input_file, len(xticklabels))
-
-        for plotkey, values in _plotkey_to_values.items():
-            if plotkey not in plotkey_to_values:
-                plotkey_to_values[plotkey] = values
+    with open(args.input, "r") as csvfile:
+        rows = list(csv.reader(csvfile, delimiter=','))
 
     with open(args.scale_map, "r") as jsonfile:
         plotkey_to_scales = json.load(jsonfile)
@@ -167,9 +110,9 @@ def _main(args):
             dpi=args.dpi
             )
 
-    xvalue_begin, xvalue_end = _define_xaxis(ax, xticklabels, args.xlabel, args.num_recent_entries)
+    xvalue_begin, xvalue_end = _define_xaxis(ax, rows[0][1:], args.xlabel, args.num_recent_entries)
 
-    min_yvalue, max_yvalue = _plot(ax, plotkey_to_values, plotkey_to_scales, xvalue_begin, xvalue_end, args.scale_key, args.scale_factor)
+    min_yvalue, max_yvalue = _plot(ax, {row[0]: [int(n) for n in row[1:]] for row in rows[1:]}, plotkey_to_scales, xvalue_begin, xvalue_end, args.scale_key, args.scale_factor)
 
     _define_yaxis(ax, min_yvalue, max_yvalue, args.figsize[1], args.yscale, args.ylabel, args.scale_key, args.scale_factor)
 
@@ -187,20 +130,11 @@ if __name__ == "__main__":
 
     # "Values from rows with identical strings in the key columns are summed (e.g. across administrations)."
 
-    parser.add_argument("--inputs", "-i", nargs="+", type=str, action="store", required=True,
-            help="Input paths to CSV files. All files after the first one only augment the first file. In other words: x-labels are derived from the first file, and duplicate entries (i.e. with identical keys across files) are ignored.")
+    parser.add_argument("--input", "-i", type=str, action="store", required=True,
+            help="Input paths to CSV files.")
 
     parser.add_argument("--output", "-o", type=str, action="store", required=True,
             help="Output path to PNG file")
-
-    parser.add_argument("--key-field-names", nargs="+", type=str, action="store", required=True,
-            help="Names of key fields. The CSV's first row is parsed for these names to identify the key columns (e.g. country and province). If using several input files with inconsistent key fields names, list all variations as whitespace-separated list. Order is preserved.")
-
-    parser.add_argument("--first-value-field-name", nargs="+", type=str, action="store", required=True,
-            help="Name of first value field. The CSV's first row is parsed for these names to identify the first value column (e.g. the first date). If using several input files with inconsistent first value field names, list all variations as whitespace-separated list. Order is preserved.")
-
-    parser.add_argument("--key-delimiter", type=str, action="store", default="/",
-            help="Delimiter string for concatenating keys")
 
     parser.add_argument("--xlabel", "-x", type=str, action="store", default="",
             help="Label for x-axis")

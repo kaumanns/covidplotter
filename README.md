@@ -28,6 +28,8 @@ The currently provided scaling factors are taken from English Wikipedia.
 
 ```
 git clone <repository url>
+cd <repository url>
+make dependencies
 ```
 
 ### Usage
