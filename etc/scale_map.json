@@ -47,31 +47,31 @@
         "median_age": 38.1,
         "land_area_in_sqkm": 9147593
     },
-    "Florida": {
+    "US/Florida": {
         "population_size": 21477737,
         "population_density_per_sqkm": 121.0,
         "median_age": 42.2,
         "land_area_in_sqkm": 138887
     },
-    "New York": {
+    "US/New York": {
         "population_size": 19453561,
         "population_density_per_sqkm": 159.0,
         "median_age": 39.0,
         "land_area_in_sqkm": 122057
     },
-    "California": {
+    "US/California": {
         "population_size": 39512223,
         "population_density_per_sqkm": 97.9,
         "median_age": 36.9,
         "land_area_in_sqkm": 403466
     },
-    "Washington": {
+    "US/Washington": {
         "population_size": 7614893,
         "population_density_per_sqkm": 39.6,
         "median_age": 37.7,
         "land_area_in_sqkm": 172119
     },
-    "Massachusetts": {
+    "US/Massachusetts": {
         "population_size": 6939373,
         "population_density_per_sqkm": 324.0,
         "median_age": 39.4,
