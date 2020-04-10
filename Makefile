@@ -44,8 +44,7 @@ clean:
 	rm -f recovered/*.{png,csv}
 
 %.pull:
-	cd $* \
-		&& $(GIT) pull
+	$(GIT) -C "$*" pull
 
 %.png: $$(notdir $$*).csv $(SCALE_MAP)
 	$(call plot,$<,$(word 2,$^),,$@,$(notdir $*),,,$(NUM_RECENT_ENTRIES))
