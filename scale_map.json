@@ -29,6 +29,24 @@
         "median_age": 47.1,
         "land_area_in_sqkm": 348672
     },
+    "Iran": {
+        "population_size": 83183741,
+        "population_density_per_sqkm": 48,
+        "median_age": 30.3,
+        "land_area_in_sqkm": 1531595
+    },
+    "Turkey": {
+        "population_size": 83154997,
+        "population_density_per_sqkm": 105,
+        "median_age": 30.9,
+        "land_area_in_sqkm": 769623
+    },
+    "Sweden": {
+        "population_size": 10333456,
+        "population_density_per_sqkm": 23,
+        "median_age": 41.2,
+        "land_area_in_sqkm": 410335
+    },
     "Switzerland": {
         "population_size": 8570146,
         "population_density_per_sqkm": 207.0,
