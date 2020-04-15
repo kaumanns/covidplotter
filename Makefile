@@ -2,7 +2,7 @@ SHELL = /bin/bash
 GIT = /usr/bin/git
 TABLEPLOTTER = tableplotter/tableplotter.py
 
-NUM_RECENT_ENTRIES = 30
+NUM_RECENT_ENTRIES = 60
 SCALE_MAP = scale_map.json
 
 SUBMODULE_ROOT = COVID-19
