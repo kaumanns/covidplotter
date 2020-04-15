@@ -55,27 +55,36 @@ def _csse_csv(path, key_fields, value_idx, csv_delimiter, key_delimiter):
 
         value_labels =  [dateparser.parse(label).strftime("%d-%m-%Y") for label in rows[0][value_idx:]]
 
+        blacklist = dict()
+
         key_to_values = dict()
         for row in rows[1:]:
             key = key_delimiter.join([row[i] for i in key_fields if row[i] != ""])
             values = [ _int_or_zero(n) for n in row[value_idx:] ]
 
-            if key in key_to_values:
-                # assert len(key_to_values[key]) == len(values), "Inconsistent number of values for same key between rows (got {}, expected {}), detected in in file \"{}\" at row \"{}\".".format(len(key_to_values[key]), len(values), path, csv_delimiter.join(row))
-                if len(key_to_values[key]) == len(values):
-                    key_to_values[key] = list(map(lambda x,y: x+y, key_to_values[key], values))
-                else:
-                    warnings.warn(
-                            "Inconsistent number of values ({} and {}) for same key {} in file \"{}\", ignoring key.".format(
-                                len(key_to_values[key]),
-                                len(values),
-                                key,
-                                path
+            if key not in blacklist:
+                if key in key_to_values:
+                    # assert len(key_to_values[key]) == len(values), "Inconsistent number of values for same key between rows (got {}, expected {}), detected in in file \"{}\" at row \"{}\".".format(len(key_to_values[key]), len(values), path, csv_delimiter.join(row))
+                    if len(key_to_values[key]) == len(values):
+                        key_to_values[key] = list(map(lambda x,y: x+y, key_to_values[key], values))
+                    else:
+                        warnings.warn(
+                                "Inconsistent number of values ({} and {}) for same key \"{}\" in file \"{}\" -- ignoring key.".format(
+                                    len(key_to_values[key]),
+                                    len(values),
+                                    key,
+                                    path
+                                    )
                                 )
-                            )
-                    key_to_values.pop(key)
-            else:
-                key_to_values[key] = values
+                        key_to_values.pop(key)
+                        blacklist[key] = True
+                else:
+                    key_to_values[key] = values
+
+        if len(blacklist.items()) > 0:
+            warnings.warn("Ignored keys: {}".format(blacklist.keys().__str__()))
+            for key,_ in blacklist.items():
+                assert key not in key_to_values
 
     return key_to_values, value_labels
 
