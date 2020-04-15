@@ -6,9 +6,42 @@ import os
 import csv
 import sys
 import argparse
+import warnings
 import collections
 
 import dateparser
+
+def _args():
+    parser = argparse.ArgumentParser(description='')
+
+    parser.add_argument("--primary-input", "-p", type=str, action="store", required=True,
+            help="Input paths to CSV files.")
+
+    parser.add_argument("--primary-key-fields", nargs="+", type=int, action="store", required=True,
+            help="")
+
+    parser.add_argument("--primary-value-fields-begin", type=int, action="store", required=True,
+            help="")
+
+    parser.add_argument("--secondary-input", "-s", type=str, action="store", default=None,
+            help="Input paths to CSV files.")
+
+    parser.add_argument("--secondary-key-fields", nargs="+", type=int, action="store", default=None,
+            help="")
+
+    parser.add_argument("--secondary-value-fields-begin", type=int, action="store", default=None,
+            help="")
+
+    parser.add_argument("--key-delimiter", type=str, action="store", default="/",
+            help="")
+
+    parser.add_argument("--csv-delimiter", type=str, action="store", default=",",
+            help="")
+
+    parser.add_argument("--output", "-o", type=str, action="store", required=True,
+            help="")
+
+    return parser.parse_args()
 
 def _int_or_zero(n):
     if n == "":
@@ -25,11 +58,22 @@ def _csse_csv(path, key_fields, value_idx, csv_delimiter, key_delimiter):
         key_to_values = dict()
         for row in rows[1:]:
             key = key_delimiter.join([row[i] for i in key_fields if row[i] != ""])
-            values = [_int_or_zero(n) for n in row[value_idx:]]
+            values = [ _int_or_zero(n) for n in row[value_idx:] ]
 
             if key in key_to_values:
-                assert len(key_to_values[key]) == len(values), "Inconsistent number of values in {} at row {}.".format(path, csv_delimiter.join(row))
-                key_to_values[key] = list(map(lambda x,y: x+y, key_to_values[key], values))
+                # assert len(key_to_values[key]) == len(values), "Inconsistent number of values for same key between rows (got {}, expected {}), detected in in file \"{}\" at row \"{}\".".format(len(key_to_values[key]), len(values), path, csv_delimiter.join(row))
+                if len(key_to_values[key]) == len(values):
+                    key_to_values[key] = list(map(lambda x,y: x+y, key_to_values[key], values))
+                else:
+                    warnings.warn(
+                            "Inconsistent number of values ({} and {}) for same key {} in file \"{}\", ignoring key.".format(
+                                len(key_to_values[key]),
+                                len(values),
+                                key,
+                                path
+                                )
+                            )
+                    key_to_values.pop(key)
             else:
                 key_to_values[key] = values
 
@@ -78,35 +122,5 @@ def _main(args):
                 outfile.write(args.csv_delimiter.join(["\"{}\"".format(key)] + [str(value) for value in values]) + "\n")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='')
+    _main(_args())
 
-    # "Values from rows with identical strings in the key columns are summed (e.g. across administrations)."
-
-    parser.add_argument("--primary-input", "-p", type=str, action="store", required=True,
-            help="Input paths to CSV files.")
-
-    parser.add_argument("--primary-key-fields", nargs="+", type=int, action="store", required=True,
-            help="")
-
-    parser.add_argument("--primary-value-fields-begin", type=int, action="store", required=True,
-            help="")
-
-    parser.add_argument("--secondary-input", "-s", type=str, action="store", default=None,
-            help="Input paths to CSV files.")
-
-    parser.add_argument("--secondary-key-fields", nargs="+", type=int, action="store", default=None,
-            help="")
-
-    parser.add_argument("--secondary-value-fields-begin", type=int, action="store", default=None,
-            help="")
-
-    parser.add_argument("--key-delimiter", type=str, action="store", default="/",
-            help="")
-
-    parser.add_argument("--csv-delimiter", type=str, action="store", default=",",
-            help="")
-
-    parser.add_argument("--output", "-o", type=str, action="store", required=True,
-            help="")
-
-    _main(parser.parse_args())
