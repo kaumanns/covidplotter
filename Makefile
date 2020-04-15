@@ -23,7 +23,7 @@ define plot =
 		--title $(5) \
 		$(if $(6),--scale-factor $(6)) \
 		$(if $(7),--yscale $(7)) \
-		--num-recent-entries $(8) \
+		--num-recent-columns $(8) \
 		--xlabel Date \
 		--ylabel Count
 endef
