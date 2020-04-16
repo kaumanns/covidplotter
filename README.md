@@ -36,13 +36,27 @@ make dependencies
 
 ### Usage
 
-Plot, optionally using 4 threads via `-j` option:
+Delete output files:
 
 ```
-make clean && make -j 4
+make clean
 ```
+
+Plot without updating the source data:
+
+```
+make -j 4
+```
+
+Plot after updating the source data:
+
+```
+make update -j 4
+```
+
+Using `n` threads with `-j <n>` is optional.
 
 Notes:
 
 - In order to change the countries and/or scaling factors, modify the JSON configuration in `etc/scale_map.json`.
-- If new configurations are provided, modify `Makefile` accordingly. Run `src/covidplotter.py` for more options.
+- Run `src/covidplotter.py` for more options.
