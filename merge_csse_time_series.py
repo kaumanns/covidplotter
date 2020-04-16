@@ -47,7 +47,7 @@ def _int_or_zero(n):
     if n == "":
         return 0
     else:
-        return int(n)
+        return int(float(n))
 
 def _csse_csv(path, key_fields, value_idx, csv_delimiter, key_delimiter):
     with open(path, "r") as csvfile:
