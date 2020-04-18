@@ -22,7 +22,7 @@ SCALE_MAP = scale_map.json
 ################################################################################
 # Internal configuration
 
-PIP_DEPENDENCIES = dateparser
+PIP_DEPENDENCIES = dateparser matplotlib
 
 SUBMODULE_ROOT = COVID-19
 CSV_HOME = $(SUBMODULE_ROOT)/csse_covid_19_data/csse_covid_19_time_series
