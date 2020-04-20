@@ -11,6 +11,8 @@ DEATHS_KEY = deaths
 CONFIRMED_KEY = confirmed
 RECOVERED_KEY = recovered
 
+NAMES = ,Austria,France,Germany,Italy,Spain,Sweden,Switzerland,"United Kingdom",US,US/California,US/Florida,US/Illinois,US/Louisiana,US/Massachusetts,US/Michigan,"US/New Jersey","US/New York",US/Pennsylvania,US/Washington
+
 AGE_KEY = median_age
 AREA_KEY = land_area_in_sqkm
 DENSITY_KEY = population_density_per_sqkm
@@ -21,6 +23,10 @@ SCALE_MAP = scale_map.json
 
 ################################################################################
 # Internal configuration
+
+COMMA := ,
+SPACE :=
+SPACE +=
 
 PIP_DEPENDENCIES = dateparser matplotlib
 
@@ -80,6 +86,7 @@ define PNG_template
 		--input $$(word 1,$$^) \
 		--scale-map $$(word 2,$$^) \
 		--title $$(notdir $$*) \
+		--names $(subst $(COMMA),$(SPACE),$(NAMES)) \
 		--output $$@ \
 		--xlabel Date \
 		--ylabel Count \
